@@ -1,0 +1,136 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-pt-sans), sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 200 100% 97%; /* Very Light Cool Pastel Blue/Off-white */
+    --foreground: 210 30% 25%; /* Dark Slate Blue for text */
+
+    --card: 0 0% 100%; /* White cards for contrast */
+    --card-foreground: 210 30% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 30% 25%;
+
+    --primary: 145 55% 72%; /* Pastel Green */
+    --primary-foreground: 145 40% 20%; /* Dark Green for text on primary */
+
+    --secondary: 145 65% 88%; /* Lighter Pastel Green */
+    --secondary-foreground: 145 35% 30%;
+
+    --muted: 250 60% 94%; /* Very Light Pastel Lavender */
+    --muted-foreground: 250 30% 50%; /* Muted Lavender for text */
+
+    --accent: 200 60% 75%; /* Pastel Blue */
+    --accent-foreground: 200 40% 22%; /* Dark Blue for text on accent */
+
+    --destructive: 0 72% 51%; /* Standard Destructive Red */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 200 60% 90%; /* Light Pastel Blue Border */
+    --input: 0 0% 97%; /* Off-white/Very light gray for inputs */
+    --ring: 145 55% 72%; /* Pastel Green for focus rings */
+
+    --chart-1: 145 55% 72%; /* Primary - Pastel Green */
+    --chart-2: 200 60% 75%; /* Accent - Pastel Blue */
+    --chart-3: 250 50% 80%; /* Tertiary - Pastel Lavender */
+    --chart-4: 145 65% 82%; /* Lighter Pastel Green */
+    --chart-5: 200 70% 85%; /* Lighter Pastel Blue */
+    
+    --radius: 0.5rem;
+
+    /* Sidebar variables */
+    --sidebar-background: 200 80% 96%; /* Light Cool Pastel Blue, slightly more saturated than main bg */
+    --sidebar-foreground: 210 30% 25%; /* Matches main foreground */
+    --sidebar-primary: 145 55% 72%; /* Matches main primary (Green) */
+    --sidebar-primary-foreground: 145 40% 20%; /* Matches main primary-foreground */
+    --sidebar-accent: 200 60% 75%; /* Matches main accent (Blue) */
+    --sidebar-accent-foreground: 200 40% 22%; /* Matches main accent-foreground */
+    --sidebar-border: 200 50% 88%; 
+    --sidebar-ring: 145 55% 72%; /* Matches main ring (Green) */
+  }
+
+  .dark {
+    --background: 210 30% 12%; /* Dark Slate Blue */
+    --foreground: 210 30% 88%; /* Light Slate Blue/Gray for text */
+
+    --card: 210 28% 18%; /* Darker Slate Blue for cards */
+    --card-foreground: 210 30% 88%;
+
+    --popover: 210 28% 18%;
+    --popover-foreground: 210 30% 88%;
+
+    --primary: 145 45% 55%; /* Muted Dark Pastel Green */
+    --primary-foreground: 145 25% 95%; /* Very Light Green for text */
+
+    --secondary: 145 35% 35%; /* Darker Muted Green */
+    --secondary-foreground: 145 25% 85%;
+
+    --muted: 250 30% 28%; /* Dark Muted Lavender */
+    --muted-foreground: 250 25% 75%; 
+
+    --accent: 200 50% 60%; /* Muted Dark Pastel Blue */
+    --accent-foreground: 200 25% 95%; /* Very Light Blue for text */
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 25% 30%; /* Darker Slate Blue Border */
+    --input: 210 25% 22%; /* Darker input background */
+    --ring: 145 45% 55%; /* Muted Dark Pastel Green for rings */
+
+    --chart-1: 145 45% 55%; /* Muted Dark Pastel Green */
+    --chart-2: 200 50% 60%; /* Muted Dark Pastel Blue */
+    --chart-3: 250 40% 65%; /* Muted Dark Pastel Lavender */
+    --chart-4: 145 55% 45%; /* Darker Muted Green */
+    --chart-5: 200 60% 50%; /* Darker Muted Blue */
+
+    /* Dark Sidebar variables */
+    --sidebar-background: 210 25% 15%; /* Slightly different dark blue for sidebar */
+    --sidebar-foreground: 210 30% 85%;
+    --sidebar-primary: 145 45% 55%;
+    --sidebar-primary-foreground: 145 25% 95%;
+    --sidebar-accent: 200 50% 60%;
+    --sidebar-accent-foreground: 200 25% 95%;
+    --sidebar-border: 210 20% 25%;
+    --sidebar-ring: 145 45% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main {
+    flex-grow: 1;
+  }
+}
+
+/* Custom scrollbar for a softer look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background) / 0.5);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.7);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}

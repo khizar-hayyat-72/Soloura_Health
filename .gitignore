@@ -1,0 +1,73 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js
+/.next/
+/out/
+
+# Capacitor
+/ios/
+/android/
+/www/
+/.capacitor/
+capacitor.config.json # Usually generated, capacitor.config.ts is the source
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Production
+.env.local
+.env.*.local
+!.env.example
+
+# Build outputs
+/dist
+/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# IDE / Editor specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore build/cache/deployment folders
+.firebase/
+.next/
+node_modules/
+
+
+# Optional: Firebase Emulator data
+# .firebase/emulators/
+# firebase-debug.log
+# firestore-debug.log
+# pubsub-debug.log
+# ui-debug.log
+
+# Environment variables file for firebase config (if you choose to add one later for non-NEXT_PUBLIC vars)
+.env
