@@ -1,30 +1,52 @@
-
-// src/app/(app)/chatbot/page.tsx
-"use client";
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
 import { PageContainer } from '@/components/shared/PageContainer';
 import { PageTitle } from '@/components/shared/PageTitle';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, MessageCircle, Sparkles, Lightbulb } from 'lucide-react';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
+import {
+  Loader2,
+  MessageCircle,
+  Sparkles,
+  Lightbulb
+} from 'lucide-react';
+
 import { useToast } from '@/hooks/use-toast';
-import { getPersonalizedWellbeingTips, type PersonalizedWellbeingTipsOutput } from '@/ai/flows/personalized-wellbeing-tips';
 
 const chatbotInputSchema = z.object({
   currentMood: z.number().min(1).max(10),
-  currentThoughts: z.string().min(5, { message: "Please share a few thoughts (at least 5 characters)." }).max(500, { message: "Thoughts should be under 500 characters." }),
+  currentThoughts: z.string()
+    .min(5, { message: "Please share a few thoughts (at least 5 characters)." })
+    .max(500, { message: "Thoughts should be under 500 characters." }),
 });
 
 type ChatbotInputValues = z.infer<typeof chatbotInputSchema>;
 
-export default function ChatbotPage() {
+type PersonalizedWellbeingTipsOutput = {
+  wellbeingTips: string;
+};
+
+export default function Chatbot() {
   const { toast } = useToast();
   const [wellbeingTips, setWellbeingTips] = useState<PersonalizedWellbeingTipsOutput | null>(null);
   const [isFetchingTips, setIsFetchingTips] = useState(false);
@@ -42,14 +64,20 @@ export default function ChatbotPage() {
     setIsFetchingTips(true);
     setWellbeingTips(null);
     try {
-      const tips = await getPersonalizedWellbeingTips({
-        mood: data.currentMood,
-        journalEntry: data.currentThoughts, 
+      const response = await fetch('/api/get-wellbeing-tips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-      setWellbeingTips(tips);
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(result.error || 'Unknown error');
+
+      setWellbeingTips(result);
       toast({ title: "Tips Received!", description: "Here are some personalized tips for you." });
     } catch (error) {
-      console.error("Failed to get wellbeing tips:", error);
+      console.error("Failed to fetch tips:", error);
       toast({ title: "Error", description: "Could not fetch wellbeing tips. Please try again.", variant: "destructive" });
     } finally {
       setIsFetchingTips(false);
@@ -66,7 +94,10 @@ export default function ChatbotPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="font-headline flex items-center"><MessageCircle className="mr-2 h-5 w-5 text-primary" />How are you feeling?</CardTitle>
+            <CardTitle className="font-headline flex items-center">
+              <MessageCircle className="mr-2 h-5 w-5 text-primary" />
+              How are you feeling?
+            </CardTitle>
             <CardDescription>Let us know your current state to get started.</CardDescription>
           </CardHeader>
           <CardContent>
@@ -97,6 +128,7 @@ export default function ChatbotPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="currentThoughts"
@@ -110,13 +142,22 @@ export default function ChatbotPage() {
                           {...field}
                         />
                       </FormControl>
-                       <FormDescription>A few words or sentences will do.</FormDescription>
+                      <FormDescription>A few words or sentences will do.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isFetchingTips}>
-                  {isFetchingTips ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  disabled={isFetchingTips}
+                >
+                  {isFetchingTips ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
                   Get Personalized Tips
                 </Button>
               </form>
@@ -126,7 +167,10 @@ export default function ChatbotPage() {
 
         <Card className={`shadow-lg transition-opacity duration-500 ${wellbeingTips ? 'opacity-100' : 'opacity-50'}`}>
           <CardHeader>
-            <CardTitle className="font-headline flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-accent" />Your AI-Powered Tips</CardTitle>
+            <CardTitle className="font-headline flex items-center">
+              <Lightbulb className="mr-2 h-5 w-5 text-accent" />
+              Your AI-Powered Tips
+            </CardTitle>
             <CardDescription>Here are some suggestions based on what you shared.</CardDescription>
           </CardHeader>
           <CardContent className="min-h-[200px] flex items-center justify-center">

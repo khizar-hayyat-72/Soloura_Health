@@ -1,4 +1,3 @@
-
 // src/app/(app)/journal/[id]/journal-entry-client.tsx
 "use client";
 
@@ -28,33 +27,35 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function JournalEntryClientPage({ params }: { params: { id: string } }) {
-  const { user, isLoading: authIsLoading } = useAuth(); // Renamed isLoading to authIsLoading
+  const { user, isLoading: authIsLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const clientRouterParams = useClientParams();
 
-  const entryId = params?.id || (typeof clientRouterParams.id === 'string' ? clientRouterParams.id : undefined);
+  // ✅ Fix: safe access to clientRouterParams
+  const entryId = params?.id || 
+    (clientRouterParams && typeof clientRouterParams.id === 'string'
+      ? clientRouterParams.id
+      : undefined);
 
   const [entry, setEntry] = useState<JournalEntry | null>(null);
-  const [isLoadingEntry, setIsLoadingEntry] = useState(true); // Local loading state for the entry itself
+  const [isLoadingEntry, setIsLoadingEntry] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const fetchEntry = useCallback(async () => {
     if (authIsLoading || !user || !entryId) {
-      if (!authIsLoading && !user && entryId) { 
+      if (!authIsLoading && !user && entryId) {
         toast({ title: "Authentication Required", description: "Please log in to view journal entries.", variant: "destructive" });
         router.replace('/login');
       }
-      // If auth is still loading, or no user, or no entryId, don't proceed with fetching yet.
-      // Set isLoadingEntry to false if no user or no entryId and auth is done.
       if (!authIsLoading && (!user || !entryId)) {
         setIsLoadingEntry(false);
       }
       return;
     }
-    
+
     setIsLoadingEntry(true);
     try {
       const fetchedEntry = await getJournalEntryById(entryId);
@@ -79,24 +80,22 @@ export default function JournalEntryClientPage({ params }: { params: { id: strin
   }, [entryId, router, toast, user, authIsLoading]);
 
   useEffect(() => {
-    // Trigger fetchEntry when auth state is resolved and we have a user and entryId
-    if (!authIsLoading) { // Only run if auth loading is complete
-        fetchEntry();
+    if (!authIsLoading) {
+      fetchEntry();
     }
-  }, [fetchEntry, authIsLoading]); // Depend on authIsLoading to re-evaluate when it changes
-
+  }, [fetchEntry, authIsLoading]);
 
   const moodIcon = (rating: number) => {
     if (rating >= 8) return <Smile className="h-5 w-5 text-green-500" />;
     if (rating >= 5) return <Meh className="h-5 w-5 text-yellow-500" />;
     return <Frown className="h-5 w-5 text-red-500" />;
   };
-  
+
   const moodColor = (rating: number) => {
     if (rating >= 8) return "bg-green-100 text-green-700 border-green-300";
     if (rating >= 5) return "bg-yellow-100 text-yellow-700 border-yellow-300";
     return "bg-red-100 text-red-700 border-red-300";
-  }
+  };
 
   const handleUpdate = async (data: { content: string; moodRating: number }) => {
     if (!entry?.id) return;
@@ -132,25 +131,37 @@ export default function JournalEntryClientPage({ params }: { params: { id: strin
   };
 
   if (authIsLoading || isLoadingEntry) {
-    return <PageContainer className="flex justify-center items-center min-h-[calc(100vh-200px)]"><Loader2 className="h-12 w-12 animate-spin text-primary" /></PageContainer>;
+    return (
+      <PageContainer className="flex justify-center items-center min-h-[calc(100vh-200px)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </PageContainer>
+    );
   }
 
-  if (!user) { // If still no user after auth loading, they shouldn't be here
-    return <PageContainer><PageTitle>Access Denied</PageTitle><p>You must be logged in to view this page.</p></PageContainer>;
+  if (!user) {
+    return (
+      <PageContainer>
+        <PageTitle>Access Denied</PageTitle>
+        <p>You must be logged in to view this page.</p>
+      </PageContainer>
+    );
   }
-  
+
   if (!entry) {
-    // This case should ideally be handled by the redirects in fetchEntry,
-    // but as a fallback if entryId was missing or fetch failed before redirect.
-    return <PageContainer><PageTitle>Entry Not Found</PageTitle><p>This journal entry could not be loaded or you do not have permission to view it.</p></PageContainer>;
+    return (
+      <PageContainer>
+        <PageTitle>Entry Not Found</PageTitle>
+        <p>This journal entry could not be loaded or you do not have permission to view it.</p>
+      </PageContainer>
+    );
   }
-  
+
   return (
     <PageContainer>
       <Button variant="ghost" onClick={() => router.back()} className="mb-4 text-primary hover:bg-primary/10">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Journal
       </Button>
-      
+
       {!isEditing ? (
         <Card className="shadow-lg">
           <CardHeader>
@@ -206,7 +217,7 @@ export default function JournalEntryClientPage({ params }: { params: { id: strin
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isSubmitting} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-              {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : "Delete"}
+              {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -214,4 +225,3 @@ export default function JournalEntryClientPage({ params }: { params: { id: strin
     </PageContainer>
   );
 }
-
