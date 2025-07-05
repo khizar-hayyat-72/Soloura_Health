@@ -1,7 +1,13 @@
 "use client"
 
 import * as React from "react"
+<<<<<<< HEAD
 import { DayPicker } from "react-day-picker"
+=======
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { DayPicker } from "react-day-picker"
+
+>>>>>>> 7af6609e3828d06b8fd92e4c4b88d04e142ff722
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
@@ -51,6 +57,17 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
+<<<<<<< HEAD
+=======
+      components={{
+        IconLeft: ({ className, ...props }) => (
+          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
+        ),
+        IconRight: ({ className, ...props }) => (
+          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
+        ),
+      }}
+>>>>>>> 7af6609e3828d06b8fd92e4c4b88d04e142ff722
       {...props}
     />
   )
