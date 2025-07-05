@@ -6,18 +6,5 @@ dist/
 
 # Firebase
 .firebase/
-.firebaserc
-firebase.json
-
-# User configs or system paths
-*.zip
-*.log
-*.env*
-.DS_Store
 .idea/
 .vscode/
-*.swp
-*.swo
-
-# Avoid absolute paths if somehow included
-/Users/
