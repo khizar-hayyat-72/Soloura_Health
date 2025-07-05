@@ -1,0 +1,30 @@
+# Node modules
+/node_modules/
+
+# Build outputs
+/.next/
+/out/
+/dist/
+/build/
+.idx/
+.firebase/
+Users/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# VS Code
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
