@@ -1,4 +1,3 @@
-
 // src/app/(auth)/login/page.tsx
 import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthCard } from '@/components/auth/AuthCard';
@@ -18,7 +17,9 @@ export default function LoginPage() {
         </p>
       }
     >
-      <LoginForm />
+      <div>
+        <LoginForm />
+      </div>
     </AuthCard>
   );
 }
