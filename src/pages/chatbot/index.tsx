@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 
 import { useToast } from '@/hooks/use-toast';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 const chatbotInputSchema = z.object({
   currentMood: z.number().min(1).max(10),
@@ -85,112 +86,114 @@ export default function Chatbot() {
   };
 
   return (
-    <PageContainer>
-      <PageTitle>Personalized Wellness Chat</PageTitle>
-      <p className="text-lg text-muted-foreground mb-8">
-        Share your current mood and thoughts to receive tailored meditation and wellbeing tips from our AI.
-      </p>
+    <AuthGuard>
+      <PageContainer>
+        <PageTitle>Personalized Wellness Chat</PageTitle>
+        <p className="text-lg text-muted-foreground mb-8">
+          Share your current mood and thoughts to receive tailored meditation and wellbeing tips from our AI.
+        </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="font-headline flex items-center">
-              <MessageCircle className="mr-2 h-5 w-5 text-primary" />
-              How are you feeling?
-            </CardTitle>
-            <CardDescription>Let us know your current state to get started.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="currentMood"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Current Mood: {moodValue}/10</FormLabel>
-                      <FormControl>
-                        <Slider
-                          defaultValue={[field.value]}
-                          max={10}
-                          min={1}
-                          step={1}
-                          onValueChange={(value) => {
-                            field.onChange(value[0]);
-                            setMoodValue(value[0]);
-                          }}
-                          className="my-2"
-                          aria-label="Current mood slider"
-                        />
-                      </FormControl>
-                      <FormDescription>1 (Low) - 10 (Great)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <MessageCircle className="mr-2 h-5 w-5 text-primary" />
+                How are you feeling?
+              </CardTitle>
+              <CardDescription>Let us know your current state to get started.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="currentMood"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Current Mood: {moodValue}/10</FormLabel>
+                        <FormControl>
+                          <Slider
+                            defaultValue={[field.value]}
+                            max={10}
+                            min={1}
+                            step={1}
+                            onValueChange={(value) => {
+                              field.onChange(value[0]);
+                              setMoodValue(value[0]);
+                            }}
+                            className="my-2"
+                            aria-label="Current mood slider"
+                          />
+                        </FormControl>
+                        <FormDescription>1 (Low) - 10 (Great)</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="currentThoughts"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Briefly, what&apos;s on your mind?</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="e.g., Feeling a bit stressed about work today."
-                          className="resize-none min-h-[100px]"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>A few words or sentences will do.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="currentThoughts"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Briefly, what&apos;s on your mind?</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="e.g., Feeling a bit stressed about work today."
+                            className="resize-none min-h-[100px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>A few words or sentences will do.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <Button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  disabled={isFetchingTips}
-                >
-                  {isFetchingTips ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="mr-2 h-4 w-4" />
-                  )}
-                  Get Personalized Tips
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+                  <Button
+                    type="submit"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    disabled={isFetchingTips}
+                  >
+                    {isFetchingTips ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="mr-2 h-4 w-4" />
+                    )}
+                    Get Personalized Tips
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
 
-        <Card className={`shadow-lg transition-opacity duration-500 ${wellbeingTips ? 'opacity-100' : 'opacity-50'}`}>
-          <CardHeader>
-            <CardTitle className="font-headline flex items-center">
-              <Lightbulb className="mr-2 h-5 w-5 text-accent" />
-              Your AI-Powered Tips
-            </CardTitle>
-            <CardDescription>Here are some suggestions based on what you shared.</CardDescription>
-          </CardHeader>
-          <CardContent className="min-h-[200px] flex items-center justify-center">
-            {isFetchingTips && (
-              <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-2" />
-                <p className="text-muted-foreground">Generating your tips...</p>
-              </div>
-            )}
-            {!isFetchingTips && wellbeingTips && (
-              <div className="text-sm text-foreground whitespace-pre-wrap p-4 bg-accent/10 rounded-md border border-accent/20">
-                {wellbeingTips.wellbeingTips}
-              </div>
-            )}
-            {!isFetchingTips && !wellbeingTips && (
-              <p className="text-muted-foreground">Your personalized tips will appear here once generated.</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </PageContainer>
+          <Card className={`shadow-lg transition-opacity duration-500 ${wellbeingTips ? 'opacity-100' : 'opacity-50'}`}>
+            <CardHeader>
+              <CardTitle className="font-headline flex items-center">
+                <Lightbulb className="mr-2 h-5 w-5 text-accent" />
+                Your AI-Powered Tips
+              </CardTitle>
+              <CardDescription>Here are some suggestions based on what you shared.</CardDescription>
+            </CardHeader>
+            <CardContent className="min-h-[200px] flex items-center justify-center">
+              {isFetchingTips && (
+                <div className="text-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-2" />
+                  <p className="text-muted-foreground">Generating your tips...</p>
+                </div>
+              )}
+              {!isFetchingTips && wellbeingTips && (
+                <div className="text-sm text-foreground whitespace-pre-wrap p-4 bg-accent/10 rounded-md border border-accent/20">
+                  {wellbeingTips.wellbeingTips}
+                </div>
+              )}
+              {!isFetchingTips && !wellbeingTips && (
+                <p className="text-muted-foreground">Your personalized tips will appear here once generated.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
+    </AuthGuard>
   );
 }

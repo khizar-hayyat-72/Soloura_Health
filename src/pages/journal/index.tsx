@@ -23,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function JournalListPage() {
   const { user } = useAuth();
@@ -86,51 +87,53 @@ export default function JournalListPage() {
   }
 
   return (
-    <PageContainer>
-      <div className="flex justify-between items-center mb-8">
-        <PageTitle>My Journal</PageTitle>
-        <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Link href="/journal/new">
-            <PlusCircle className="mr-2 h-5 w-5" /> New Entry
-          </Link>
-        </Button>
-      </div>
-
-      {entries.length === 0 ? (
-        <div className="text-center py-12">
-          <BookOpen className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold text-foreground mb-2">No journal entries yet.</h3>
-          <p className="text-muted-foreground mb-6">Start writing to track your thoughts and mood.</p>
+    <AuthGuard>
+      <PageContainer>
+        <div className="flex justify-between items-center mb-8">
+          <PageTitle>My Journal</PageTitle>
           <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Link href="/journal/new">Create Your First Entry</Link>
+            <Link href="/journal/new">
+              <PlusCircle className="mr-2 h-5 w-5" /> New Entry
+            </Link>
           </Button>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {entries.map((entry) => (
-            <JournalEntryCard key={entry.id} entry={entry} onDelete={handleDeleteRequest} />
-          ))}
-        </div>
-      )}
-      
-      {entryToDelete && (
-        <AlertDialog open={!!entryToDelete} onOpenChange={(open) => !open && setEntryToDelete(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your journal entry.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setEntryToDelete(null)} disabled={isDeleting}>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-                {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : "Delete"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
-    </PageContainer>
+
+        {entries.length === 0 ? (
+          <div className="text-center py-12">
+            <BookOpen className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No journal entries yet.</h3>
+            <p className="text-muted-foreground mb-6">Start writing to track your thoughts and mood.</p>
+            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Link href="/journal/new">Create Your First Entry</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {entries.map((entry) => (
+              <JournalEntryCard key={entry.id} entry={entry} onDelete={handleDeleteRequest} />
+            ))}
+          </div>
+        )}
+
+        {entryToDelete && (
+          <AlertDialog open={!!entryToDelete} onOpenChange={(open) => !open && setEntryToDelete(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your journal entry.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setEntryToDelete(null)} disabled={isDeleting}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                  {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Delete"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </PageContainer>
+    </AuthGuard>
   );
 }

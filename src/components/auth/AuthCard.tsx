@@ -13,7 +13,8 @@ interface AuthCardProps {
 
 export function AuthCard({ title, description, children, footerContent, showLogo = true }: AuthCardProps) {
   return (
-    <Card className="w-full sm:w-3/4 lg:w-3/5 mx-auto shadow-xl">
+
+    <Card className="w-full sm:w-3/4 lg:w-2/5 mx-auto shadow-xl bg-white rounded-lg">
       <CardHeader className="text-center">
         {showLogo && (
            <Link href="/" className="flex items-center justify-center gap-2 text-primary mb-4">
