@@ -31,7 +31,7 @@ const MoodCalendarGrid = dynamic(() =>
 
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const [latestMood, setLatestMood] = useState<number | null>(null);
   const [journalCount, setJournalCount] = useState(0);
@@ -89,7 +89,16 @@ export default function DashboardPage() {
   return (
     <AuthGuard>
       <PageContainer>
-        <PageTitle>{getGreeting()}, {user?.name || 'User'}!</PageTitle>
+        <div className="flex justify-between mb-4">
+          <PageTitle>{getGreeting()}, {user?.name || 'User'}!</PageTitle>
+          <Button
+            variant="outline"
+            className="bg-destructive text-white hover:bg-destructive/90"
+            onClick={logout}
+          >
+            Logout
+          </Button>
+        </div>
         <p className="text-lg text-muted-foreground mb-8">
           Ready to reflect and grow today? Your mental wellbeing journey continues here.
         </p>

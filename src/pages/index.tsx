@@ -1,10 +1,8 @@
-
-// src/app/page.tsx
 "use client";
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth'; // Using useAuth to check auth state
+import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 
 export default function HomePage() {
