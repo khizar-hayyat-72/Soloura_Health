@@ -5,6 +5,7 @@ import { HelplineCard } from '@/components/helplines/HelplineCard';
 import type { Helpline } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 const helplinesData: Helpline[] = [
   {
@@ -28,7 +29,7 @@ const helplinesData: Helpline[] = [
     description: 'Provides crisis intervention and suicide prevention services to lesbian, gay, bisexual, transgender, queer & questioning (LGBTQ) young people under 25.',
     logo: 'https://placehold.co/100x100.png?text=Trevor',
   },
-   {
+  {
     id: '4',
     name: 'SAMHSA National Helpline',
     number: '1-800-662-HELP (4357)',
@@ -53,21 +54,23 @@ const helplinesData: Helpline[] = [
 
 export default function HelplinesPage() {
   return (
-    <PageContainer>
-      <PageTitle>Mental Health Helplines</PageTitle>
-      <Alert className="mb-8 bg-accent/20 border-accent text-accent-foreground">
-        <Info className="h-5 w-5 text-accent" />
-        <AlertTitle className="font-semibold text-accent">Important Notice</AlertTitle>
-        <AlertDescription>
-          If you are in immediate danger or experiencing a medical emergency, please call 911 or your local emergency number. 
-          The resources listed below are for support and information.
-        </AlertDescription>
-      </Alert>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {helplinesData.map((helpline) => (
-          <HelplineCard key={helpline.id} helpline={helpline} />
-        ))}
-      </div>
-    </PageContainer>
+    <AuthGuard>
+      <PageContainer>
+        <PageTitle>Mental Health Helplines</PageTitle>
+        <Alert className="mb-8 bg-accent/20 border-accent text-accent-foreground">
+          <Info className="h-5 w-5 text-accent" />
+          <AlertTitle className="font-semibold text-accent">Important Notice</AlertTitle>
+          <AlertDescription>
+            If you are in immediate danger or experiencing a medical emergency, please call 911 or your local emergency number.
+            The resources listed below are for support and information.
+          </AlertDescription>
+        </Alert>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {helplinesData.map((helpline) => (
+            <HelplineCard key={helpline.id} helpline={helpline} />
+          ))}
+        </div>
+      </PageContainer>
+    </AuthGuard>
   );
 }

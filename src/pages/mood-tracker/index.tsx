@@ -13,12 +13,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { format, parseISO } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
-const MoodChart = dynamic(() => 
-  import('@/components/mood/MoodChart').then(mod => mod.MoodChart), 
-  { 
+const MoodChart = dynamic(() =>
+  import('@/components/mood/MoodChart').then(mod => mod.MoodChart),
+  {
     ssr: false,
-    loading: () => <Skeleton className="h-[300px] w-full rounded-lg" /> 
+    loading: () => <Skeleton className="h-[300px] w-full rounded-lg" />
   }
 );
 
@@ -42,12 +43,12 @@ export default function MoodTrackerPage() {
           getJournalEntriesForUser(user.id),
           getJournalEntriesForLastNDays(user.id, 7)
         ]);
-        
+
         setAllJournalEntries(allEntries);
         setChartEntries(last7DaysEntries);
 
         if (allEntries.length > 0 && !selectedEntryId) {
-          setSelectedEntryId(allEntries[0].id); 
+          setSelectedEntryId(allEntries[0].id);
         } else if (allEntries.length === 0) {
           setSelectedEntryId(undefined);
         }
@@ -116,10 +117,12 @@ export default function MoodTrackerPage() {
   // ☝️ You can do the same thing with `analyzeMoodTrend` if needed.
 
   return (
-    <PageContainer>
-      <PageTitle>AI Mood Tracker</PageTitle>
-      {/* UI remains the same */}
-      {/* Replace analyzeMood() and analyzeMoodTrend() with API calls in both places */}
-    </PageContainer>
+    <AuthGuard>
+      <PageContainer>
+        <PageTitle>AI Mood Tracker</PageTitle>
+        {/* UI remains the same */}
+        {/* Replace analyzeMood() and analyzeMoodTrend() with API calls in both places */}
+      </PageContainer>
+    </AuthGuard>
   );
 }
