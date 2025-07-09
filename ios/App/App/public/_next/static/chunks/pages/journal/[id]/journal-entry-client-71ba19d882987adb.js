@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[770],{48492:(_,n,u)=>{(window.__NEXT_P=window.__NEXT_P||[]).push(["/journal/[id]/journal-entry-client",function(){return u(66241)}])}},_=>{var n=n=>_(_.s=n);_.O(0,[671,389,679,749,687,210,669,559,873,241,636,593,792],()=>n(48492)),_N_E=_.O()}]);
