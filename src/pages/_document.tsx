@@ -6,7 +6,6 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <title>Soloura - Your Mental Wellness Companion</title>
           <meta
             name="description"
             content="A mental health journaling app to track your mood and find peace."
