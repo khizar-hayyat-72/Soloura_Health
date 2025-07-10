@@ -35,8 +35,8 @@ import { useToast } from '@/hooks/use-toast';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 
 const chatbotInputSchema = z.object({
-  currentMood: z.number().min(1).max(10),
-  currentThoughts: z.string()
+  mood: z.number().min(1).max(10),
+  journalEntry: z.string()
     .min(5, { message: "Please share a few thoughts (at least 5 characters)." })
     .max(500, { message: "Thoughts should be under 500 characters." }),
 });
@@ -56,19 +56,19 @@ export default function Chatbot() {
   const form = useForm<ChatbotInputValues>({
     resolver: zodResolver(chatbotInputSchema),
     defaultValues: {
-      currentMood: 5,
-      currentThoughts: '',
+      mood: 5,
+      journalEntry: '',
     },
   });
 
-  const onSubmit = async (data: ChatbotInputValues) => {
+  const onSubmit = async (defaultValues: ChatbotInputValues) => {
     setIsFetchingTips(true);
     setWellbeingTips(null);
     try {
       const response = await fetch('/api/get-wellbeing-tips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(defaultValues),
       });
 
       const result = await response.json();
@@ -107,7 +107,7 @@ export default function Chatbot() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="currentMood"
+                    name="mood"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Your Current Mood: {moodValue}/10</FormLabel>
@@ -133,7 +133,7 @@ export default function Chatbot() {
 
                   <FormField
                     control={form.control}
-                    name="currentThoughts"
+                    name="journalEntry"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Briefly, what&apos;s on your mind?</FormLabel>
