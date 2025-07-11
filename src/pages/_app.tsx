@@ -17,11 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </PageContainer>
       </main>
-      <AuthGuard>
-        <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
-          © {new Date().getFullYear()} Soloura. Nurturing your mental wellbeing.
-        </footer>
-      </AuthGuard>
+      <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
+        © {new Date().getFullYear()} Soloura. Nurturing your mental wellbeing.
+      </footer>
     </div>
   );
 }
