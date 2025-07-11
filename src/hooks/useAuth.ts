@@ -55,14 +55,21 @@ export function useAuth(): AuthState {
     setIsLoading(true);
     try {
       const signedUpUser = await authService.signup(email, name, password);
-      router.push('/login'); 
+      router.push('/login');
       return signedUpUser;
     } catch (error: any) {
-      console.error("[AuthHook] Signup failed:", error);
       setIsLoading(false);
-      throw error;
+
+      // Firebase duplicate email error
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error("An account with this email already exists.");
+      }
+
+      console.error("[AuthHook] Signup failed:", error);
+      throw error; // rethrow other errors
     }
   }, [router]);
+
 
   const logoutUser = useCallback(async () => {
     setIsLoading(true);
