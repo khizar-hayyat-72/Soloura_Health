@@ -114,15 +114,159 @@ export default function MoodTrackerPage() {
     }
   };
 
+  const handleAnalyzeMoodTrend = async () => {
+    if (!user || chartEntries.length < 2) {
+      toast({
+        title: "Error",
+        description: "You need at least two recent journal entries to analyze a trend.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsAnalyzingTrend(true);
+    setMoodTrendAnalysis(null);
+    try {
+      const moodContents = chartEntries.map(entry => ({
+        date: entry.date,
+        content: entry.content
+      }));
+
+      const response = await fetch('/api/analyze-mood-trend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries: moodContents })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(result.error || 'Unknown error');
+
+      setMoodTrendAnalysis(result);
+      toast({ title: "Trend Analysis Complete", description: "Mood trend successfully analyzed." });
+    } catch (error) {
+      console.error("Trend analysis failed:", error);
+      toast({
+        title: "Trend Analysis Failed",
+        description: "Could not analyze mood trend. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalyzingTrend(false);
+    }
+  };
+
+
   // ☝️ You can do the same thing with `analyzeMoodTrend` if needed.
 
   return (
     <AuthGuard>
-      <PageContainer>
-        <PageTitle>AI Mood Tracker</PageTitle>
-        {/* UI remains the same */}
-        {/* Replace analyzeMood() and analyzeMoodTrend() with API calls in both places */}
-      </PageContainer>
+        <PageContainer>
+          <PageTitle>AI Mood Tracker</PageTitle>
+          <p className="text-lg text-muted-foreground mb-8">
+            Gain insights into your emotional patterns and get personalized suggestions.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <MoodChart data={chartEntries} timeRange="week" /> {/* Pass chartEntries (last 7 days) */}
+            </div>
+
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="font-headline flex items-center"><Sparkles className="mr-2 h-5 w-5 text-primary" /> Analyze Single Entry</CardTitle>
+                  <CardDescription>Select a journal entry for detailed AI mood analysis.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {isLoadingEntries ? (
+                    <div className="flex items-center justify-center h-20">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      <p className="ml-2 text-muted-foreground">Loading entries...</p>
+                    </div>
+                  ) : allJournalEntries.length === 0 ? (
+                    <Alert variant="default" className="bg-accent/10 border-accent text-accent-foreground">
+                      <AlertTriangle className="h-4 w-4 text-accent" />
+                      <AlertTitle className="font-semibold">No Journal Entries</AlertTitle>
+                      <AlertDescription>Write journal entries to analyze your mood.</AlertDescription>
+                    </Alert>
+                  ) : (
+                    <Select onValueChange={setSelectedEntryId} value={selectedEntryId}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a journal entry" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allJournalEntries.map(entry => (
+                          <SelectItem key={entry.id} value={entry.id}>
+                            {format(parseISO(entry.date), 'MMM d, yyyy')} - {entry.content.substring(0, 30)}...
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  <Button onClick={handleAnalyzeMood} disabled={isAnalyzing || !selectedEntryId || allJournalEntries.length === 0 || isLoadingEntries} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                    {isAnalyzing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                    Analyze Selected Entry
+                  </Button>
+
+                  {analysisResult && (
+                    <Card className="mt-6 bg-background border-primary/50">
+                      <CardHeader>
+                        <CardTitle className="text-lg font-semibold text-primary flex items-center">
+                          <Lightbulb className="mr-2 h-5 w-5" /> Single Entry Insights
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3 text-sm">
+                        <p><strong>AI Mood Rating:</strong> <span className="font-bold text-primary">{analysisResult.moodRating}/10</span></p>
+                        <p><strong>Keywords:</strong> <span className="italic text-muted-foreground">{analysisResult.moodKeywords}</span></p>
+                        <div>
+                          <strong className="block mb-1">Suggested Solutions:</strong>
+                          <p className="text-muted-foreground whitespace-pre-wrap p-3 bg-primary/5 rounded-md border-primary/20">{analysisResult.suggestedSolutions}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="font-headline flex items-center"><TrendingUpIcon className="mr-2 h-5 w-5 text-accent" /> Mood Trend Analysis</CardTitle>
+                  <CardDescription>Get an AI analysis of your mood trend over the last few days.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button
+                    onClick={handleAnalyzeMoodTrend}
+                    disabled={isAnalyzingTrend || chartEntries.length < 2 || isLoadingEntries}
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                  >
+                    {isAnalyzingTrend ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <TrendingUpIcon className="mr-2 h-4 w-4" />}
+                    Analyze Mood Trend (Last 7 Days)
+                  </Button>
+                  {isAnalyzingTrend && (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                      <p className="ml-2 text-muted-foreground">Analyzing trend...</p>
+                    </div>
+                  )}
+                  {moodTrendAnalysis && !isAnalyzingTrend && (
+                    <div className="text-sm text-foreground whitespace-pre-wrap p-3 mt-4 bg-accent/10 rounded-md border border-accent/20">
+                      {moodTrendAnalysis.trendAnalysis}
+                    </div>
+                  )}
+                  {!isAnalyzingTrend && !moodTrendAnalysis && chartEntries.length < 2 && !isLoadingEntries && (
+                    <Alert variant="default" className="bg-accent/10 border-accent text-accent-foreground">
+                      <AlertTriangle className="h-4 w-4 text-accent" />
+                      <AlertTitle className="font-semibold">Not Enough Data</AlertTitle>
+                      <AlertDescription>You need at least two recent journal entries to analyze a trend.</AlertDescription>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </PageContainer>
     </AuthGuard>
   );
 }
