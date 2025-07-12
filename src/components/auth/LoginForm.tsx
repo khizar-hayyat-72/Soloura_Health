@@ -54,17 +54,15 @@ export function LoginForm() {
         error.code === 'auth/wrong-password'
       ) {
         message = "Invalid email or password.";
-        form.setError("email", { type: "manual", message });
+        form.clearErrors("email");
         form.setError("password", { type: "manual", message });
       } else if (error.code === 'auth/too-many-requests') {
         message = "Too many failed login attempts. Please try again later or reset your password.";
-        form.setError("email", { type: "manual", message });
         form.setError("password", { type: "manual", message });
       } else if (error.message) {
         message = error.message;
       }
 
-      // Optional toast if you want extra feedback
       toast({
         title: "Login Failed",
         description: message,
