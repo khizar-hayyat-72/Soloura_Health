@@ -134,3 +134,7 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary));
 }
+
+.lucide-log-out{
+  color: red !important;
+}

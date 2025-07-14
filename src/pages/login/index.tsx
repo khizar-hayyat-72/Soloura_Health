@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   return (
-    <div className="h-[90dvh] flex items-center justify-center px-4">
+    <div className="flex items-center justify-center px-4">
       <AuthCard
         title="Welcome Back!"
         description="Log in to continue your journey with Soloura."

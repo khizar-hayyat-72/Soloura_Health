@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation'; // ✅ Added
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +32,7 @@ export function LoginForm() {
   const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const router = useRouter(); // ✅ Added
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -56,7 +58,12 @@ export function LoginForm() {
           description: "Invalid email or password.",
           variant: "destructive",
         });
+
+        return;
       }
+
+      // ✅ Login successful
+      router.push("/dashboard");
 
     } catch (error: any) {
       toast({
@@ -69,7 +76,6 @@ export function LoginForm() {
     }
   };
 
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -80,7 +86,12 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="you@example.com" {...field} autoComplete="email" />
+                <Input
+                  type="email"
+                  placeholder="you@example.com"
+                  {...field}
+                  autoComplete="email"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +104,12 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} autoComplete="current-password" />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  {...field}
+                  autoComplete="current-password"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

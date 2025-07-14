@@ -50,30 +50,48 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
-      await signup(data.email, data.name, data.password);
+      const result = await signup(data.email, data.name, data.password);
+
+      if (!result) {
+        form.setError("email", {
+          type: "manual",
+          message: "An account with this email may already exist.",
+        });
+
+        toast({
+          title: "Signup Failed",
+          description: "Could not create an account.",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
       toast({
         title: "Signup Successful!",
         description: "A verification email has been sent. Please check your inbox.",
         duration: 5000,
       });
+
       router.push('/login');
+
     } catch (error: any) {
-      if (error.message === "An account with this email already exists.") {
-        form.setError("email", {
-          type: "manual",
-          message: "An account with this email already exists.",
-        });
-      }
+      // This catch will run if signup() throws instead of returning false (unlikely now)
+      form.setError("email", {
+        type: "manual",
+        message: error.message || "Signup failed unexpectedly.",
+      });
 
       toast({
-        title: "Signup Failed",
-        description: error.message || "Could not create an account. Please try again.",
+        title: "Signup Error",
+        description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <Form {...form}>

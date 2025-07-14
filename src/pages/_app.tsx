@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AuthGuard>
         <AppNavbar />
       </AuthGuard>
-      <main className="flex-grow">
+      <main className="flex-grow my-10 ">
         <PageContainer>
           <Component {...pageProps} />
         </PageContainer>
