@@ -43,35 +43,32 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
     try {
-      await login(data.email, data.password);
-      // If login succeeds, navigation is handled by useAuth
-    } catch (error: any) {
-      let message = "An unexpected error occurred during login.";
+      const result = await login(data.email, data.password);
 
-      if (
-        error.code === 'auth/invalid-credential' ||
-        error.code === 'auth/user-not-found' ||
-        error.code === 'auth/wrong-password'
-      ) {
-        message = "Invalid email or password.";
-        form.clearErrors("email");
-        form.setError("password", { type: "manual", message });
-      } else if (error.code === 'auth/too-many-requests') {
-        message = "Too many failed login attempts. Please try again later or reset your password.";
-        form.setError("password", { type: "manual", message });
-      } else if (error.message) {
-        message = error.message;
+      if (!result) {
+        form.setError("password", {
+          type: "manual",
+          message: "Invalid email or password.",
+        });
+
+        toast({
+          title: "Login Failed",
+          description: "Invalid email or password.",
+          variant: "destructive",
+        });
       }
 
+    } catch (error: any) {
       toast({
-        title: "Login Failed",
-        description: message,
+        title: "Unexpected Error",
+        description: error.message || "Something went wrong.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <Form {...form}>

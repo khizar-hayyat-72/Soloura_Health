@@ -39,7 +39,7 @@ export async function signup(email: string, name: string, password?: string): Pr
     return userProfile;
   } catch (error: any) {
     console.error('[Auth] Error during signup:', error.message);
-    throw error;
+    return null;
   }
 }
 
@@ -77,7 +77,7 @@ export async function login(email: string, password?: string): Promise<FirebaseU
     return firebaseUser;
   } catch (error: any) {
     console.error('[Auth] Error during login:', error.message);
-    throw error;
+    return null;
   }
 }
 
@@ -87,7 +87,7 @@ export async function logout(): Promise<void> {
     console.log('[Auth] User signed out.');
   } catch (error: any) {
     console.error('[Auth] Error during sign out:', error.message);
-    throw error;
+    return null;
   }
 }
 
