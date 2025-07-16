@@ -1,18 +1,25 @@
-
-// src/components/auth/SignupForm.tsx
 "use client";
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation'; // For redirection after successful signup message
+import { useRouter } from 'next/navigation';
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -43,27 +50,48 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
-      await signup(data.email, data.name, data.password);
+      const result = await signup(data.email, data.name, data.password);
+
+      if (!result) {
+        form.setError("email", {
+          type: "manual",
+          message: "An account with this email may already exist.",
+        });
+
+        toast({
+          title: "Signup Failed",
+          description: "Could not create an account.",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
       toast({
         title: "Signup Successful!",
-        description: "A verification email has been sent. Please check your inbox to verify your account.",
-        duration: 5000, // Keep toast longer
+        description: "A verification email has been sent. Please check your inbox.",
+        duration: 5000,
       });
-      // Redirect to login page or a "please verify" page after showing the toast
-      // For now, let's redirect to login after a short delay or user action.
-      // Or, more simply, useAuth's onAuthStateChanged might handle redirection to dashboard if already "logged in" by Firebase.
-      // However, since verification is now a step, redirecting to login might be better.
-      router.push('/login'); 
+
+      router.push('/login');
+
     } catch (error: any) {
-       toast({
-        title: "Signup Failed",
-        description: error.message || "Could not create an account. Please try again.",
+      // This catch will run if signup() throws instead of returning false (unlikely now)
+      form.setError("email", {
+        type: "manual",
+        message: error.message || "Signup failed unexpectedly.",
+      });
+
+      toast({
+        title: "Signup Error",
+        description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <Form {...form}>

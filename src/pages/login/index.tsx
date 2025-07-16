@@ -7,6 +7,7 @@ export default function LoginPage() {
   return (
 
     <div className="min-h-screen flex items-center justify-center bg-[#e6f7ff] px-4">
+
       <AuthCard
         title="Welcome Back!"
         description="Log in to continue your journey with Soloura."

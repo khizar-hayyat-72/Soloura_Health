@@ -1,4 +1,3 @@
-
 // src/lib/auth.ts
 import {
   createUserWithEmailAndPassword,
@@ -15,7 +14,11 @@ import type { User } from './types';
 // Firestore collection for users
 const USERS_COLLECTION = 'users';
 
-export async function signup(email: string, name: string, password?: string): Promise<User> {
+export async function signup(
+  email: string,
+  name: string,
+  password?: string
+): Promise<User | false> {
   if (!password) {
     throw new Error("Password is required for signup.");
   }
@@ -32,18 +35,21 @@ export async function signup(email: string, name: string, password?: string): Pr
       id: firebaseUser.uid,
       email: firebaseUser.email || email,
       name: name,
-      emailVerified: firebaseUser.emailVerified, // Store initial verification status
+      emailVerified: firebaseUser.emailVerified,
     };
     await setDoc(doc(db, USERS_COLLECTION, firebaseUser.uid), userProfile);
     console.log('[Auth] User signed up and profile created in Firestore:', userProfile);
     return userProfile;
   } catch (error: any) {
     console.error('[Auth] Error during signup:', error.message);
-    throw error;
+    return false;
   }
 }
 
-export async function login(email: string, password?: string): Promise<FirebaseUser> {
+export async function login(
+  email: string,
+  password?: string
+): Promise<FirebaseUser | false> {
   if (!password) {
     throw new Error("Password is required for login.");
   }
@@ -51,8 +57,6 @@ export async function login(email: string, password?: string): Promise<FirebaseU
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
 
-    // Fallback: Ensure profile exists and emailVerified status is current in Firestore.
-    // onAuthStateChanged is the primary source for the app's User state with full profile.
     const userDocRef = doc(db, USERS_COLLECTION, firebaseUser.uid);
     const userDocSnap = await getDoc(userDocRef);
 
@@ -66,28 +70,27 @@ export async function login(email: string, password?: string): Promise<FirebaseU
       };
       await setDoc(userDocRef, newProfile);
     } else {
-      // If profile exists, ensure emailVerified status in Firestore matches Firebase Auth.
       const storedProfile = userDocSnap.data() as User;
       if (storedProfile.emailVerified !== firebaseUser.emailVerified) {
         await updateDoc(userDocRef, { emailVerified: firebaseUser.emailVerified });
       }
     }
+
     console.log('[Auth] User authentication successful via signInWithEmailAndPassword.');
-    // Return the FirebaseUser; onAuthStateChanged will provide the full User profile to the app state.
     return firebaseUser;
   } catch (error: any) {
     console.error('[Auth] Error during login:', error.message);
-    throw error;
+    return false;
   }
 }
 
-export async function logout(): Promise<void> {
+export async function logout(): Promise<void | false> {
   try {
     await firebaseSignOut(auth);
     console.log('[Auth] User signed out.');
   } catch (error: any) {
     console.error('[Auth] Error during sign out:', error.message);
-    throw error;
+    return false;
   }
 }
 
@@ -98,7 +101,6 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
       const userDocSnap = await getDoc(userDocRef);
       if (userDocSnap.exists()) {
         const userProfileData = userDocSnap.data();
-        // Ensure Firestore profile is updated if verification status changed since last check
         if (userProfileData.emailVerified !== firebaseUser.emailVerified) {
           await updateDoc(userDocRef, { emailVerified: firebaseUser.emailVerified });
         }
@@ -120,13 +122,13 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
           await setDoc(doc(db, USERS_COLLECTION, firebaseUser.uid), newProfile);
           callback(newProfile);
         } catch (dbError) {
-            console.error("[Auth] Failed to create fallback user profile in Firestore:", dbError);
-            callback({
-                id: firebaseUser.uid,
-                email: firebaseUser.email || '',
-                name: firebaseUser.displayName || 'User',
-                emailVerified: firebaseUser.emailVerified,
-            });
+          console.error("[Auth] Failed to create fallback user profile in Firestore:", dbError);
+          callback({
+            id: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            name: firebaseUser.displayName || 'User',
+            emailVerified: firebaseUser.emailVerified,
+          });
         }
       }
     } else {

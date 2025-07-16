@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#e6f7ff] px-4">
+    <div className="flex items-center justify-center px-4">
       <AuthCard
         title="Create your Soloura Account"
         description="Join our community and start your wellness journey today."
