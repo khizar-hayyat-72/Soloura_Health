@@ -1,11 +1,17 @@
 {
 	"server": {
-		"url": "https://solourahealth.netlify.app/login",
+		"url": "https://solourahealth.netlify.app/dashboard",
 		"cleartext": true
+	},
+	"ios": {
+		"contentInset": "always",
+		"allowsLinkPreview": true
 	},
 	"appId": "com.soloura.app",
 	"appName": "Soloura",
 	"webDir": "out",
 	"bundledWebRuntime": false,
-	"packageClassList": []
+	"packageClassList": [
+		"PushNotificationsPlugin"
+	]
 }
