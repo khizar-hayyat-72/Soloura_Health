@@ -3,8 +3,8 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   server: {
-    // url: 'https://solourahealth.netlify.app/login', // URL of your Next.js app during development
-    url: 'http://192.168.100.107:3000', // URL of your Next.js app during development
+    url: 'https://solourahealth.netlify.app/login', // URL of your Next.js app during development
+    // url: 'http://192.168.100.107:3000', // URL of your Next.js app during development
     cleartext: true, // Allow cleartext traffic for development
   },
   ios: {
