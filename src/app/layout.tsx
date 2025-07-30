@@ -1,7 +1,8 @@
+
 import type { Metadata, Viewport } from 'next';
 import { PT_Sans } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from "@/components/ui/toaster";
 
 const ptSans = PT_Sans({
   subsets: ['latin'],
@@ -14,22 +15,23 @@ export const metadata: Metadata = {
   description: 'A mental health journaling app to track your mood and find peace.',
   applicationName: 'Soloura',
   icons: {
-    icon: '/favicon.ico',
+    icon: "/favicon.ico",
     apple: [
-      { url: '/icons/apple-touch-icon.png' },
-      { url: '/icons/apple-touch-icon-152x152.png', sizes: '152x152' },
-      { url: '/icons/apple-touch-icon-180x180.png', sizes: '180x180' },
-      { url: '/icons/apple-touch-icon-167x167.png', sizes: '167x167' },
-    ],
+      { url: "/icons/apple-touch-icon.png" },
+      { url: "/icons/apple-touch-icon-152x152.png", sizes: "152x152" },
+      { url: "/icons/apple-touch-icon-180x180.png", sizes: "180x180" },
+      { url: "/icons/apple-touch-icon-167x167.png", sizes: "167x167" },
+    ]
   },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  viewportFit: 'cover', // ✅ Enables iOS safe area support
-  themeColor: '#F0FBF4',
+  viewportFit: 'cover',
+  themeColor: '#F0FBF4', // Corresponds to light theme background
 };
+
 
 export default function RootLayout({
   children,
@@ -37,17 +39,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={ptSans.variable}>
+    <html lang="en" className={`${ptSans.variable}`}>
       <head>
+        {/* PWA-related tags and manifest link have been removed. */}
+        {/* Next.js will automatically generate link and meta tags from the metadata object above. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-body antialiased">
-        {/* ✅ Wrap content with safe-area padding */}
-        <div className="safe-area">
-          {children}
-          <Toaster />
-        </div>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

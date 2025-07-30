@@ -8,14 +8,7 @@ interface PageContainerProps {
 
 export function PageContainer({ children, className }: PageContainerProps) {
   return (
-    <div
-      className={cn(
-        'container mx-auto',
-        'px-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]',
-        'sm:px-6 lg:px-8',
-        className
-      )}
-    >
+    <div className={cn('container mx-auto sm:px-6 lg:px-8', className)}>
       {children}
     </div>
   );
