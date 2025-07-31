@@ -4,9 +4,19 @@ import { AppNavbar } from '@/components/layout/AppNavbar';
 import { PageContainer } from '@/components/shared/PageContainer';
 import '../app/globals.css';
 import { AuthGuard } from '@/components/auth/AuthGuard';
+import { useEffect } from 'react';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    // Only run if Capacitor is available
+    if (typeof window !== 'undefined' && (window as any).Capacitor) {
+      import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
+        StatusBar.setBackgroundColor({ color: '#ffffff' });
+        StatusBar.setStyle({ style: Style.Light });
+      });
+    }
+  }, []);
   return (
     <div className="flex flex-col">
       <AuthGuard>

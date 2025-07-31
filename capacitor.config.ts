@@ -6,6 +6,11 @@ const config: CapacitorConfig = {
   appName: 'Soloura',
   webDir: 'out', // Points to the static export directory
   bundledWebRuntime: false,
+  plugins: {
+    StatusBar: {
+      overlay: false
+    }
+  }
 };
 
 export default config;
